@@ -1,0 +1,87 @@
+:root {
+  --dark-text-color: #333;
+  --dark-background-color: #333;
+  --light-text-color: #fff;
+  --light-background-color: #f6f1eb;
+  --mint-color: #c6eee0;
+  --opacity-light-color: #ffffff84;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Gill Sans', sans-serif;
+}
+
+.error-message {
+  padding: 10px;
+  text-align: center;
+  color: #ff1c42;
+}
+
+.toggle-password {
+  background: none;
+  border: none;
+  margin: 10px;
+  color: var(--dark-text-color);
+
+  span {
+    cursor: pointer;
+    opacity: 0.4;
+
+    &:hover {
+      opacity: 1;
+      color: var(--dark-text-color);
+      text-decoration: underline 2px solid #c6eee0;
+      background: none;
+      border: none;
+    }
+  }
+}
+
+textarea:focus, input:focus {
+  outline-color: var(--mint-color);
+}
+
+button {
+  background-color: rgba(255, 255, 255, 0.23);
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+}
+
+.mark-img {
+  width: 35px;
+}
+
+.container-for-count-marks {
+  padding-left: 11px;
+  width: 63px;
+}
+
+
+.reward-confirm-btn {
+  background-color: var(--mint-color);
+  color: var(--dark-text-color);
+  border: none;
+  border-radius: 2vw;
+  padding: 1vw 4vw;
+
+  &:hover {
+    color: var(--light-text-color);
+    background-color: black;
+    transition: 0.3s;
+  }
+}
+
+.profile-link {
+  color: black;
+  text-decoration: underline var(--mint-color);
+}
