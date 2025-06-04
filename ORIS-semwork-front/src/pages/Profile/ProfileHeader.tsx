@@ -2,24 +2,11 @@ import {Link, useNavigate} from "react-router-dom";
 import '@styles/universal.scss'
 import '@styles/profile.scss'
 import {useAppContext} from "../../AppContext";
+import {logout} from "@api/usersApi";
 
 export const ProfileHeader = () => {
     const {user, setUser, isAuthenticated} = useAppContext();
     const navigate = useNavigate();
-
-    const logout = async () => {
-        try {
-            document.cookie.split(';').forEach(cookie => {
-                const [name] = cookie.split('=');
-                document.cookie = `${name.trim()}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
-            });
-            setUser(null);
-            sessionStorage.removeItem('user');
-            navigate('/');
-        } catch (err) {
-            console.error('Logout error:', err);
-        }
-    };
 
     return (
         <>
@@ -33,7 +20,7 @@ export const ProfileHeader = () => {
                         </strong>
                     </span>
                     {isAuthenticated ? (
-                        <button className="button" onClick={logout}>Sign Out</button>
+                        <button className="button" onClick={() => logout(navigate, setUser)}>Sign Out</button>
                     ) : (
                         <Link className="button" to='/signIn'>Sign In</Link>
                     )}

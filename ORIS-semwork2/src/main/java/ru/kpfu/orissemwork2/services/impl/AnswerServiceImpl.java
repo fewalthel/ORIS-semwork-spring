@@ -102,13 +102,13 @@ public class AnswerServiceImpl implements AnswerService {
             Answer answer = answerRepository.findById(answerId)
                     .orElseThrow(() -> new EntityNotFoundException("Answer not found with ID: " + answerId));
 
-            if (userId.equals(answer.getUser()
-                    .getAccountId()) || user.getRole().equals(Role.ADMIN)) {
-                //user.getRewards().remove()
+            if (userId.equals(answer.getUser().getAccountId())
+                    || user.getRole().equals(Role.ADMIN)) {
+
                 rewardService.removeReward(user, RewardType.ANSWER);
                 user.getAnswers().remove(answer);
                 usersRepository.save(user);
-                //answerRepository.delete(answer);
+
             } else {
                 throw new AccessDeniedException("User does not have permission to delete this answer");
             }

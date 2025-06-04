@@ -71,20 +71,18 @@ public class RewardServiceImpl implements RewardService {
     @Override
     public void removeReward(User user, RewardType type) {
         try {
-        if (type == RewardType.ANSWER) {
-            Integer threshold = user.getAnswers().size();
-            Optional<Reward> reward = rewardRepository.findByTypeAndThreshold(RewardType.ANSWER, threshold);
-                   /* .orElseThrow(() -> new EntityNotFoundException("Reward not found"));*/
+            if (type == RewardType.ANSWER) {
+                Integer threshold = user.getAnswers().size();
+                Optional<Reward> rewardOptional = rewardRepository.findByTypeAndThreshold(RewardType.ANSWER, threshold);
 
-            if (reward.isPresent()) user.getRewards().remove(reward);
-        }
-        if (type == RewardType.QUESTION) {
-            Integer threshold = user.getQuestions().size();
-            Optional<Reward> reward = rewardRepository.findByTypeAndThreshold(RewardType.QUESTION, threshold);
-                    /*.orElseThrow(() -> new EntityNotFoundException("Reward not found"));*/
+                rewardOptional.ifPresent(reward -> user.getRewards().remove(reward));
+            }
+            if (type == RewardType.QUESTION) {
+                Integer threshold = user.getQuestions().size();
+                Optional<Reward> rewardOptional = rewardRepository.findByTypeAndThreshold(RewardType.QUESTION, threshold);
 
-            if (reward.isPresent())  user.getRewards().remove(reward);
-        }
+                rewardOptional.ifPresent(reward -> user.getRewards().remove(reward));
+            }
         } catch (Exception e) {
             loggerService.logRewardErrorToFIle(e);
             throw e;

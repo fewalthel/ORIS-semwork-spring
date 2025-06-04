@@ -1,10 +1,8 @@
 import {useEffect, useRef, useState} from "react";
 import axiosConfig from "../../axiosConfig";
-import {RewardCard} from "@pages/Admin/RewardCard";
-import {Reward} from "@types/models";
 import {RewardsList} from "@components/RewardsList";
-
-const ID = 3;
+import {fetchAllRewards} from "@api/rewardsApi";
+import {AdminMenuHeader} from "@pages/Admin/AdminMenuHeader";
 
 export const AllRewardsPage = () => {
     const [rewardsList, setRewardsList] = useState([]);
@@ -20,19 +18,9 @@ export const AllRewardsPage = () => {
     const rewardIdRef = useRef(null);
 
     useEffect(() => {
-        fetchRewards();
+        (async () => fetchAllRewards(setRewardsList))()
     }, []);
 
-    const fetchRewards = async () => {
-        try {
-            const response = await axiosConfig.get('/rewards/all');
-            setRewardsList(response.data);
-            console.log(response.data)
-        } catch (error) {
-            setError(error.response?.body)
-            console.error('Ошибка при загрузке наград:', error);
-        }
-    };
 
     const handleImageChange = (event) => {
         const selectedFile = event.target.files[0];
@@ -60,7 +48,7 @@ export const AllRewardsPage = () => {
         try {
             await axiosConfig.post('/rewards/add', rewardData)
             alert('Награда успешно добавлена!');
-            fetchRewards();
+            await fetchAllRewards(setRewardsList);
         } catch (error) {
 
             setError(error.response?.body)
@@ -84,8 +72,7 @@ export const AllRewardsPage = () => {
             const response = await axiosConfig.post(`/files/save/rewardImage/${rewardIdRef.current.value}`, formData, {
                 headers: {'Content-Type': 'multipart/form-data'}
             })
-            fetchRewards();
-            fetchRewards();
+            await fetchAllRewards(setRewardsList);
         } catch (error) {
             console.error('Ошибка при загрузке изображения:', error.message);
             alert('Ошибка при загрузке изобаржения');
@@ -93,7 +80,8 @@ export const AllRewardsPage = () => {
     }
 
     return (
-        <div id="container-for-content" style={{marginTop: "-8vw"}}>
+        <div id="container-for-content">
+            <AdminMenuHeader/>
             <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <form
                     onSubmit={handleSubmit}
@@ -155,11 +143,11 @@ export const AllRewardsPage = () => {
 
                         <div className="radio-group">
                             <label className="radio-option">
-                                <input type="radio" name="type" value="ANSWER" defaultChecked />
+                                <input type="radio" name="type" value="ANSWER" defaultChecked/>
                                 <span>Answer</span>
                             </label>
                             <label className="radio-option">
-                                <input type="radio" name="type" value="QUESTION" />
+                                <input type="radio" name="type" value="QUESTION"/>
                                 <span>Question</span>
                             </label>
                         </div>

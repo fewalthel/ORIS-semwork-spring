@@ -18,6 +18,10 @@ export const AnswerCard: FC<Props> = ({favoritesAnswers, setFavoritesAnswers, an
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(answer.content);
 
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [isAddingFavorite, setIsAddingFavorite] = useState(false);
+    const [isRemovingFavorite, setIsRemovingFavorite] = useState(false);
+
     const isFavorite = favoritesAnswers?.some(fav => fav.id === answer.id);
 
     return (
@@ -27,29 +31,44 @@ export const AnswerCard: FC<Props> = ({favoritesAnswers, setFavoritesAnswers, an
                     <h2>{answer.question.title}</h2>
                 </Link>
                 <div style={{
-                    display: 'flex', justifyContent: 'space-between', width: '15vw',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    width: 'auto',
+                    gap: '1vw',
                     alignItems: 'center'
                 }}>
                     {isFavorite ? (
-                        <button style={{width: '4vw', display: 'flex', justifyContent: 'center'}}
-                                onClick={() => handleRemoveFavorites(answer.id, setFavoritesAnswers)}>
-                            <img src="/icons/saved_icon_fill.svg" style={{height: '2.5vw', width: '2vw'}}/>
+                        <button
+                            style={{width: '4vw', display: 'flex', justifyContent: 'center'}}
+                            onClick={() => handleRemoveFavorites(answer.id, setFavoritesAnswers, setIsRemovingFavorite)}
+                            disabled={isRemovingFavorite}
+                        >
+                            <img src="/icons/saved_icon_fill.svg"
+                                 style={{height: '2.5vw', width: '2vw'}}/>
                         </button>
                     ) : (
-                        <button style={{width: '4vw', display: 'flex', justifyContent: 'center'}}
-                                onClick={() => handleAddFavorites(answer.id, setFavoritesAnswers)}>
+                        <button
+                            style={{width: '4vw', display: 'flex', justifyContent: 'center'}}
+                            onClick={() => handleAddFavorites(answer.id, setFavoritesAnswers, setIsAddingFavorite)}
+                            disabled={isAddingFavorite}
+                        >
                             <img src="/icons/saved_icon.svg" style={{height: '2.5vw', width: '2vw'}}/>
                         </button>
                     )}
 
                     {(user.role !== 'USER' || user.id === answer.author.id) && (
                         <>
-                            <button style={{width: '4vw', display: 'flex', justifyContent: 'center'}}
-                                    onClick={() => handleDeleteAnswer(answer.id, setFavoritesAnswers, onDelete)}>
+                            <button
+                                style={{width: '4vw', display: 'flex', justifyContent: 'center'}}
+                                onClick={() => handleDeleteAnswer(answer.id, setFavoritesAnswers, onDelete, setIsDeleting)}
+                                disabled={isDeleting}
+                            >
                                 <img src='/icons/trash-icon.svg' style={{height: '3vw', width: '3vw'}}/>
                             </button>
-                            <button style={{width: '4vw', display: 'flex', justifyContent: 'center'}}
-                                    onClick={() => setIsEditing(prev => !prev)}>
+                            <button
+                                style={{width: '4vw', display: 'flex', justifyContent: 'center'}}
+                                onClick={() => setIsEditing(prev => !prev)}
+                            >
                                 {isEditing ?
                                     <img style={{height: '3vw', width: '3vw'}} src="/icons/cancel.svg"/>
                                     :
@@ -67,11 +86,20 @@ export const AnswerCard: FC<Props> = ({favoritesAnswers, setFavoritesAnswers, an
                         value={editedContent}
                         onChange={(e) => setEditedContent(e.target.value)}
                         rows={4}
-                        style={{width: '97.5%', margin: '1vw', padding: '1vw',
-                            borderRadius: '2vw', border: 'var(--mint-color) solid 0.15vw'}}
+                        style={{
+                            width: '97.5%',
+                            margin: '1vw',
+                            padding: '1vw',
+                            borderRadius: '2vw',
+                            border: 'var(--mint-color) solid 0.15vw'
+                        }}
                     />
-                    <button onClick={() => handleEditAnswer(editedContent, answer, setIsEditing)} className="button" style={{marginLeft: '1vw'}}
-                            disabled={!editedContent.trim()}>
+                    <button
+                        onClick={() => handleEditAnswer(editedContent, answer, setIsEditing)}
+                        className="button"
+                        style={{marginLeft: '1vw'}}
+                        disabled={!editedContent.trim()}
+                    >
                         edit
                     </button>
                 </>
@@ -86,3 +114,78 @@ export const AnswerCard: FC<Props> = ({favoritesAnswers, setFavoritesAnswers, an
         </section>
     );
 };
+
+//
+// export const AnswerCard: FC<Props> = ({favoritesAnswers, setFavoritesAnswers, answer, onDelete}) => {
+//     const {user} = useAppContext();
+//     const [isEditing, setIsEditing] = useState(false);
+//     const [editedContent, setEditedContent] = useState(answer.content);
+//
+//     const isFavorite = favoritesAnswers?.some(fav => fav.id === answer.id);
+//
+//     return (
+//         <section className="answer-card">
+//             <div className="container-for-answer-info">
+//                 <Link className="question_title" to={`/question?id=${answer.question.id}`}>
+//                     <h2>{answer.question.title}</h2>
+//                 </Link>
+//                 <div style={{
+//                     display: 'flex', justifyContent: 'space-between', width: '15vw',
+//                     alignItems: 'center'
+//                 }}>
+//                     {isFavorite ? (
+//                         <button style={{width: '4vw', display: 'flex', justifyContent: 'center'}}
+//                                 onClick={() => handleRemoveFavorites(answer.id, setFavoritesAnswers)}>
+//                             <img src="/icons/saved_icon_fill.svg" style={{height: '2.5vw', width: '2vw'}}/>
+//                         </button>
+//                     ) : (
+//                         <button style={{width: '4vw', display: 'flex', justifyContent: 'center'}}
+//                                 onClick={() => handleAddFavorites(answer.id, setFavoritesAnswers)}>
+//                             <img src="/icons/saved_icon.svg" style={{height: '2.5vw', width: '2vw'}}/>
+//                         </button>
+//                     )}
+//
+//                     {(user.role !== 'USER' || user.id === answer.author.id) && (
+//                         <>
+//                             <button style={{width: '4vw', display: 'flex', justifyContent: 'center'}}
+//                                     onClick={() => handleDeleteAnswer(answer.id, setFavoritesAnswers, onDelete)}>
+//                                 <img src='/icons/trash-icon.svg' style={{height: '3vw', width: '3vw'}}/>
+//                             </button>
+//                             <button style={{width: '4vw', display: 'flex', justifyContent: 'center'}}
+//                                     onClick={() => setIsEditing(prev => !prev)}>
+//                                 {isEditing ?
+//                                     <img style={{height: '3vw', width: '3vw'}} src="/icons/cancel.svg"/>
+//                                     :
+//                                     <img style={{height: '3vw', width: '3vw'}} src="/icons/pencil.svg"/>}
+//                             </button>
+//                         </>
+//                     )}
+//                 </div>
+//             </div>
+//
+//             {isEditing ? (
+//                 <>
+//                     <textarea
+//                         className="answer_edit_textarea"
+//                         value={editedContent}
+//                         onChange={(e) => setEditedContent(e.target.value)}
+//                         rows={4}
+//                         style={{width: '97.5%', margin: '1vw', padding: '1vw',
+//                             borderRadius: '2vw', border: 'var(--mint-color) solid 0.15vw'}}
+//                     />
+//                     <button onClick={() => handleEditAnswer(editedContent, answer, setIsEditing)} className="button" style={{marginLeft: '1vw'}}
+//                             disabled={!editedContent.trim()}>
+//                         edit
+//                     </button>
+//                 </>
+//             ) : (
+//                 <p className="answer_description">{answer.content}</p>
+//             )}
+//
+//             <div className="container-for-rating">
+//                 <p className="answer_author">author: {answer.author.username}</p>
+//                 <p>published at: {dateFormat(answer.publishedAt)}</p>
+//             </div>
+//         </section>
+//     );
+// };

@@ -1,37 +1,60 @@
 import axiosConfig from "../axiosConfig";
-import {Answer, type Reward} from "@types/models";
+import {Answer} from "@types/models";
 import {ShowRewardModal} from "@components/ShowRewardModal";
 
-export const handleDeleteAnswer = async (answerId: number, setFavoritesAnswers: (newValue: Answer[]) => void, onDelete) => {
+export const handleDeleteAnswer = async (
+    answerId: number,
+    setFavoritesAnswers: (newValue: Answer[]) => void,
+    onDelete,
+    setIsDeleting: (val: boolean) => void
+) => {
     try {
+        setIsDeleting(true);
         const response = await axiosConfig.post(`/answers/delete/${answerId}`);
-        console.log(response.data)
+        console.log(response.data);
         setFavoritesAnswers(prev => prev.filter(item => item.id !== answerId));
         if (onDelete) onDelete(answerId);
     } catch (error) {
-        alert(`Error with delete answer: ${error.message}`)
+        alert(`Error with delete answer: ${error.message}`);
+    } finally {
+        setIsDeleting(false);
     }
-}
+};
 
-export const handleRemoveFavorites = async (answerId: number, setFavoritesAnswers: (newValue: Answer[]) => void) => {
+export const handleRemoveFavorites = async (
+    answerId: number,
+    setFavoritesAnswers: (newValue: Answer[]) => void,
+    setIsRemovingFavorite: (val: boolean) => void
+) => {
     try {
+        setIsRemovingFavorite(true);
         await axiosConfig.post(`/answers/favorites/delete/${answerId}`);
         setFavoritesAnswers(prev => prev.filter(item => item.id !== answerId));
     } catch (error) {
         alert('error');
+    } finally {
+        setIsRemovingFavorite(false);
     }
 };
 
-export const handleAddFavorites = async (answerId: number, setFavoritesAnswers: (newValue: Answer[]) => void) => {
+export const handleAddFavorites = async (
+    answerId: number,
+    setFavoritesAnswers: (newValue: Answer[]) => void,
+    setIsAddingFavorite: (val: boolean) => void
+) => {
     try {
+        setIsAddingFavorite(true);
         const response = await axiosConfig.post(`/answers/favorites/add/${answerId}`);
         const newFavorite: Answer = response.data;
 
         setFavoritesAnswers(prev => [...prev, newFavorite]);
     } catch (error) {
         alert('error');
+    } finally {
+        setIsAddingFavorite(false);
     }
 };
+
 
 export const fetchFavorites = async (setFavoritesAnswers: (newValue: Answer[]) => void) => {
     try {

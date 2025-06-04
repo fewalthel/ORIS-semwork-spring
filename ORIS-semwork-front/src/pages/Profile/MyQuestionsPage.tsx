@@ -1,9 +1,10 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import type {Category, Question} from "@types/models";
 import {QuestionCard} from "@pages/Profile/QuestionCard";
 import {useAppContext} from "../../AppContext";
 import axiosConfig from "../../axiosConfig";
 import {handleAddQuestion} from "@api/questionsApi";
+import {useForm} from "react-hook-form";
 
 export const MyQuestionsPage = () => {
     const [categoriesList, setCategoriesList] = useState<Category[]>([]);
@@ -12,9 +13,13 @@ export const MyQuestionsPage = () => {
 
     const {user} = useAppContext();
 
-    const titleRef = useRef<HTMLInputElement>(null);
-    const contentRef = useRef<HTMLTextAreaElement>(null);
-    const categoryRef = useRef<HTMLSelectElement>(null);
+    const {register, handleSubmit, reset} = useForm({
+        defaultValues: {
+            title: "",
+            content: "",
+            category: ""
+        }
+    });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -37,7 +42,6 @@ export const MyQuestionsPage = () => {
         fetchData();
     }, [user]);
 
-
     return (
         <div id="container-for-content">
             <section className="form-to-send-question">
@@ -45,14 +49,14 @@ export const MyQuestionsPage = () => {
                 <br/>
 
                 <form id="send-question-form"
-                      onSubmit={handleAddQuestion(user.id, titleRef, contentRef, categoryRef, setMyQuestionsList, categoriesList)}>
+                      onSubmit={handleSubmit((data) => handleAddQuestion(data, user.id, setMyQuestionsList, categoriesList, reset))}>
                     <div className="form-group">
                         <label htmlFor="title">Title:</label>
                         <br/>
                         <input type="text"
                                id="title" required
-                               ref={titleRef} disabled={isLoading}/>
-                        <select ref={categoryRef} style={{marginLeft: "30px"}}
+                               {...register("title")} disabled={isLoading}/>
+                        <select {...register("category")} style={{marginLeft: "30px"}}
                                 disabled={isLoading || categoriesList.length === 0}>
                             {categoriesList.map(category => (
                                 <option key={category.id} value={category.name}>
@@ -65,17 +69,20 @@ export const MyQuestionsPage = () => {
                         <br/>
                         <label htmlFor="description">Content:</label>
                         <br/>
-                        <textarea id="description" ref={contentRef}
-                                  required disabled={isLoading}/>
+                        <textarea id="description"
+                                  required disabled={isLoading}
+                                  {...register("content")}/>
                     </div>
                     <br/>
                     <button type="submit" className="button"
-                            disabled={isLoading}>{isLoading ? 'Отправка...' : 'Submit'}
+                            disabled={isLoading}>{isLoading ? 'Submiting...' : 'Submit'}
                     </button>
                 </form>
             </section>
             <ul>
-                {myQuestionsList.length == 0 ? <p>пока что тут пусто</p> :
+                {myQuestionsList.length == 0 ?
+                    <p>There is nothing here yet</p>
+                    :
                     myQuestionsList.map(question => (
                         <li key={question.id}>
                             <QuestionCard question={question}/>

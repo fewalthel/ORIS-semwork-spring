@@ -20,5 +20,3 @@ public class Category {
     @Column(unique = true, nullable = false)
     private String name;
 }
-
-

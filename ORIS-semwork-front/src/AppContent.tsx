@@ -16,6 +16,7 @@ import {ConfirmPage} from "@pages/Confirm/ConfirmPage";
 import {AllRewardsPage} from "@pages/Admin/AllRewardsPage";
 import {AdminMenuHeader} from "@pages/Admin/AdminMenuHeader";
 import {RatingPage} from "@pages/Profile/RatingPage";
+import {NotFoundPage} from "@pages/Errors/NotFoundPage";
 
 function AppContent() {
     const location = useLocation();
@@ -34,21 +35,11 @@ function AppContent() {
         '/rating'
     ];
 
-    const showAdminHeaderPaths = [
-        '/admin_menu',
-        '/all_users',
-        '/all_categories',
-        '/all_rewards'
-    ];
-
     const showProfileHeader = showHeaderPaths.some(path => location.pathname.startsWith(path));
-    const showAdminHeader = showAdminHeaderPaths.some(path => location.pathname.startsWith(path));
 
     return (
         <>
             {showProfileHeader && <ProfileHeader/>}
-
-            {showAdminHeader && <div id="container-for-content"><AdminMenuHeader/></div>}
 
             <Routes>
                 <Route path="/" element={<MainPage/>}/>
@@ -66,6 +57,7 @@ function AppContent() {
                 <Route path="/admin_menu" element={<AdminMenuPage/>}/>
                 <Route path="/all_rewards" element={<AllRewardsPage/>}/>
                 <Route path="/rating" element={<RatingPage/>}/>
+                <Route path="/*" element={<NotFoundPage/>}/>
             </Routes>
 
 

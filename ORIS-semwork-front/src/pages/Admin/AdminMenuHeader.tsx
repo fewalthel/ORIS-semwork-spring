@@ -8,6 +8,5 @@ export const AdminMenuHeader = () => {
             <Link to="/all_categories">All categories</Link>
             <Link to="/all_rewards">All rewards</Link>
         </section>
-
     )
 }

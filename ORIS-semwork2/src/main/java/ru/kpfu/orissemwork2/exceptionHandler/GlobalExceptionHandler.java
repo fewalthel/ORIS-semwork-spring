@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import ru.kpfu.orissemwork2.exceptions.BadWordsInContentException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -40,6 +41,12 @@ public class GlobalExceptionHandler {
                 .body("Invalid username");
     }
 
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<String> handleMaxUploadSize(MaxUploadSizeExceededException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<String> handleNotFound(EntityNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -51,7 +58,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body("File not found: " + e.getMessage());
     }
-
 
     @ExceptionHandler(EntityExistsException.class)
     public ResponseEntity<String> handleAlreadyExists(EntityExistsException e) {

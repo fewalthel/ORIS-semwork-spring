@@ -1,6 +1,6 @@
-export const dateFormat = (isoString: string) => {
+export const dateFormat = (isoString: string): string => {
     const date = new Date(isoString);
-    return new Intl.DateTimeFormat('ru-RU', {
+    return new Intl.DateTimeFormat('en-EN', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',

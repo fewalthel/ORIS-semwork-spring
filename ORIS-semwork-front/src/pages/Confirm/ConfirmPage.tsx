@@ -37,14 +37,14 @@ export const ConfirmPage = () => {
     }
 
     return (
-        <div>
+        <div style={{width: '70%', transform: 'translateX(25%)', marginTop: '10vw', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
             {error && (
                 <div className="error-message">
                     <p>{error}</p>
                 </div>
             )}
             <input type="text" required placeholder="input confirm code" ref={codeRef} />
-            <button onClick={handleSubmit} disabled={isLoading} className="button">
+            <button onClick={handleSubmit} disabled={isLoading} className="button" style={{marginTop: '2vw'}}>
                 {isLoading ? 'Confirming...' : 'Confirm'}
             </button>
         </div>

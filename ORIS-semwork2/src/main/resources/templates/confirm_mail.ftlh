@@ -8,8 +8,9 @@
     <title>Спасибо за регистрацию</title>
 </head>
 <body>
-<h1>Подтверждение почты:</h1>
-<img src="/images/confirm_image.png"/>
-<h2>Ваш код подтверждения <span>${confirm_code}</span></h2>
+<h1>Подтверждение почты</h1>
+<br/>
+<#--<img src="/static/images/confirm_image.png"/>-->
+<h2>Ваш код подтверждения: <span>${confirm_code}</span></h2>
 </body>
 </html>

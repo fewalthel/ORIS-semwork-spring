@@ -1,36 +1,21 @@
 import {AnswerCard} from "@pages/Profile/AnswerCard";
 import {useEffect, useState} from "react";
 import {Answer} from "@types/models";
-import axiosConfig from "../../axiosConfig";
+import {fetchFavorites} from "@api/answersApi";
 
 export const FavoritesAnswersPage = () => {
     const [favoritesAnswers, setFavoritesAnswers] = useState<Answer[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-
-    const fetchFavorites = async () => {
-        setIsLoading(true);
-        try {
-            const response = await axiosConfig.get('/answers/favorites/all');
-            setFavoritesAnswers(response.data);
-            console.log(response.data);
-        } catch (error) {
-            console.log(error.response?.data);
-
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
     useEffect(() => {
-        fetchFavorites();
+        (async () =>
+                fetchFavorites(setFavoritesAnswers)
+        )()
     }, []);
 
     return (
         <div id="container-for-content">
-            {isLoading ? (
-                <p>Загрузка</p>
-            ) : favoritesAnswers.length === 0 ? (
-                <p>пока что тут пусто</p>
+            {favoritesAnswers.length === 0 ? (
+                <p style={{width: '100%', textAlign: 'center', marginTop: '20%'}}>There is nothing here yet</p>
             ) : (
                 <ul>
                     {favoritesAnswers.map(answer => (
@@ -39,9 +24,9 @@ export const FavoritesAnswersPage = () => {
                                 answer={answer}
                                 favoritesAnswers={favoritesAnswers}
                                 setFavoritesAnswers={setFavoritesAnswers}
-                                onDelete={(deletedId) =>
-                                    setFavoritesAnswers(prev =>
-                                        prev.filter(ans => ans.id !== deletedId)
+                                onDelete={(deletedId: number) =>
+                                    setFavoritesAnswers((prev: Answer[]) =>
+                                        prev.filter((ans: Answer) => ans.id !== deletedId)
                                     )
                                 }
                             />

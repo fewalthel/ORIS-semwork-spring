@@ -20,20 +20,17 @@ export const fetchGetQuestion = async (questionId: number, setCurrentQuestion: (
     }
 }
 
-
-export const handleAddQuestion = async (e: React.FormEvent, userId: number,
-                                        titleRef, contentRef, categoryRef,
-                                        setMyQuestionsList: (newValue: Question[]) => void, categoriesList: Category[]) => {
-    e.preventDefault();
-
-    if (!titleRef.current || !contentRef.current || !categoryRef.current) {
-        return;
-    }
-
+export const handleAddQuestion = async (
+    data: { title: string; content: string; category: string },
+    userId: number,
+    setMyQuestionsList: (newValue: Question[]) => void,
+    categoriesList: Category[],
+    reset: () => void
+) => {
     const newQuestion = {
-        title: titleRef.current.value,
-        content: contentRef.current.value,
-        category: categoryRef.current.value
+        title: data.title,
+        content: data.content,
+        category: data.category
     };
 
     try {
@@ -56,12 +53,26 @@ export const handleAddQuestion = async (e: React.FormEvent, userId: number,
         const response = await axiosConfig.get(`/questions/byAuthorId/${userId}`);
         setMyQuestionsList(response.data);
 
-        titleRef.current.value = "";
-        contentRef.current.value = "";
-        if (categoriesList.length > 0) {
-            categoryRef.current.value = categoriesList[0].name;
-        }
+        reset();
     } catch (error) {
         alert(`Error with create question: ${error}`);
     }
 };
+
+export const fetchQuestions = async (
+    categoryParam: string | null,
+    setQuestionsList: (newValue: Question[] | undefined) => void
+) => {
+    try {
+        const url = categoryParam
+            ? `/questions/byCategory/${categoryParam}`
+            : '/questions/all';
+
+        const questionsResponse = await axiosConfig.get(url)
+        setQuestionsList(questionsResponse.data);
+    } catch (error) {
+        if (error.status == 404) {
+            setQuestionsList(undefined);
+        }
+    }
+}

@@ -24,6 +24,7 @@ import java.util.Optional;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
+
     @Autowired
     private QuestionRepository questionRepository;
 
@@ -86,17 +87,6 @@ public class QuestionServiceImpl implements QuestionService {
         }
     }
 
-    @Override
-    public List<QuestionDto> getAll() {
-        try {
-            List<Question> questions = questionRepository.findAll();
-            return questionsConverter.convert(questions);
-        } catch (Exception e) {
-            loggerService.logQuestionErrorToFile(e);
-            throw e;
-        }
-    }
-
     @Transactional
     @Override
     public void delete(Long questionId, Long userId) {
@@ -108,15 +98,30 @@ public class QuestionServiceImpl implements QuestionService {
                     .orElseThrow(() -> new EntityNotFoundException("Question not found with ID: " + questionId));
 
             if (userId.equals(question.getUser()
-                    .getAccountId()) || !user.getRole()
-                    .equals(Role.USER)) {
+                    .getAccountId()) || user.getRole()
+                    .equals(Role.ADMIN)) {
+
                 rewardService.removeReward(user, RewardType.QUESTION);
-                questionRepository.delete(question);
+                user.getQuestions()
+                        .remove(question);
+                usersRepository.save(user);
+
             } else {
                 throw new AccessDeniedException("User does not have permission to delete this question");
             }
         } catch (Exception e) {
             loggerService.logAnswerErrorToFile(e);
+            throw e;
+        }
+    }
+
+    @Override
+    public List<QuestionDto> getAll() {
+        try {
+            List<Question> questions = questionRepository.findAll();
+            return questionsConverter.convert(questions);
+        } catch (Exception e) {
+            loggerService.logQuestionErrorToFile(e);
             throw e;
         }
     }

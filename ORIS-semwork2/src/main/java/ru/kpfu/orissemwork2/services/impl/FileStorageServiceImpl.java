@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import ru.kpfu.orissemwork2.models.FileInfo;
 import ru.kpfu.orissemwork2.models.Reward;
@@ -22,7 +23,6 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -63,6 +63,8 @@ public class FileStorageServiceImpl implements FileStorageService {
                     .get();
         } catch (IOException e) {
             throw new IllegalStateException(e);
+        } catch (MaxUploadSizeExceededException e) {
+            throw e;
         } catch (Exception e) {
             loggerService.logFileErrorToFile(e);
             throw e;
@@ -91,6 +93,8 @@ public class FileStorageServiceImpl implements FileStorageService {
                     .orElseThrow(() -> new FileNotFoundException("Fle not found in database"));
         } catch (IOException e) {
             throw new IllegalStateException(e);
+        } catch (MaxUploadSizeExceededException e) {
+            throw e;
         } catch (Exception e) {
             loggerService.logFileErrorToFile(e);
             throw e;
@@ -107,16 +111,9 @@ public class FileStorageServiceImpl implements FileStorageService {
             Path filePath = Paths.get(fileInfo.getUrl())
                     .normalize();
 
-            if (!filePath.startsWith(Paths.get(storagePath))) {
-                throw new SecurityException("Попытка доступа к файлу вне директории хранения.");
-            }
-
             Resource resource = new UrlResource(filePath.toUri());
 
             return resource;
-
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException(e);
         } catch (MalformedURLException e) {
             throw new FileNotFoundException("File not found in storage");
         } catch (IOException e) {
@@ -135,10 +132,6 @@ public class FileStorageServiceImpl implements FileStorageService {
 
             Path filePath = Paths.get(fileInfo.getUrl())
                     .normalize();
-
-            if (!filePath.startsWith(Paths.get(storagePath))) {
-                throw new SecurityException("Попытка доступа к файлу вне директории хранения.");
-            }
 
             Resource resource = new UrlResource(filePath.toUri());
             if (resource.exists()) {

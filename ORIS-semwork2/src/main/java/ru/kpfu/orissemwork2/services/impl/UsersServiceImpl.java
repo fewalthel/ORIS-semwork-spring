@@ -54,7 +54,6 @@ public class UsersServiceImpl implements UsersService {
             loggerService.logUserErrorToFile(e);
             throw e;
         }
-
     }
 
     @Transactional
@@ -138,6 +137,12 @@ public class UsersServiceImpl implements UsersService {
                     .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userDetails.getId()));
 
             String newUsername = changeUsernameForm.getNewUsername();
+
+            if (usersRepository.findByUsername(newUsername)
+                    .isPresent()) {
+                throw new IllegalArgumentException("Username already taken");
+            }
+
             user.setUsername(newUsername);
             usersRepository.save(user);
 
@@ -162,7 +167,6 @@ public class UsersServiceImpl implements UsersService {
                             .rewards(rewardsConverter.convert(user.getRewards()))
                             .build())
                     .collect(Collectors.toList());
-            //            return usersConverter.convert(users);
         } catch (Exception e) {
             loggerService.logUserErrorToFile(e);
             throw e;

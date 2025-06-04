@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Data
@@ -37,4 +39,8 @@ public class Question {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "categoryId", nullable = false)
     private Category category;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Answer> answers = new ArrayList<>();
+
 }

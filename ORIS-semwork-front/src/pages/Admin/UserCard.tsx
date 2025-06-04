@@ -1,6 +1,6 @@
 import {User} from "@types/models";
 import {useAppContext} from "../../AppContext";
-import {FC, useState} from 'react';
+import {type FC, useState} from 'react';
 import {handleUpdateRole} from "@api/usersApi";
 
 interface Props {
@@ -31,14 +31,15 @@ const UserCard: FC<Props> = ({userProps, onDelete}) => {
 
                         {role === 'USER' && (
                             <>
-                                <button onClick={() => onDelete(userProps.id)} className="button">
-                                    Delete user
-                                </button>
-                                <select className="user-role-select" defaultValue={role}
-                                        onChange={(e) => handleUpdateRole(userProps.id, e.target.value, setRole)}>
-                                    <option value="USER">user</option>
-                                    <option value="ADMIN">admin</option>
-                                </select>
+                              {userProps.id !== user?.id && role === 'USER' && (
+                                  <button onClick={() => onDelete(userProps.id)} className="button">
+                                      Delete user
+                                  </button>)}
+                                  <select className="user-role-select" defaultValue={role}
+                                          onChange={(e) => handleUpdateRole(userProps.id, e.target.value, setRole)}>
+                                      <option value="USER">user</option>
+                                      <option value="ADMIN">admin</option>
+                                  </select>
                             </>
                         )}
                     </h4>

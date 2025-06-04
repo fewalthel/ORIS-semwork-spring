@@ -2,6 +2,7 @@ import type {Category} from "@types/models";
 import {lazy, useEffect, useRef, useState} from "react";
 import {addNewCategory, fetchCategories} from "@api/categoriesApi";
 import {Spin} from "antd";
+import {AdminMenuHeader} from "@pages/Admin/AdminMenuHeader";
 
 const CategoryRow = lazy(() => import("@pages/Admin/CategoryRow"));
 
@@ -10,11 +11,14 @@ export const AllCategoriesPage = () => {
     const nameRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        fetchCategories(setCategoriesList);
+        (async () => fetchCategories(setCategoriesList))()
     }, []);
 
     return (
         <div id="container-for-content">
+
+                <AdminMenuHeader/>
+
             <Spin spinning={categoriesList.length === 0}>
                 <table id="table">
                     <thead>
